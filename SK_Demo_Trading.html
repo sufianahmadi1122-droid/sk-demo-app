@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SK Demo Trading</title>
+<style>
+body{margin:0;background:#10131a;color:white;font-family:Arial;padding:16px}
+.card{background:#1a202b;padding:16px;border-radius:16px;margin-bottom:14px}
+h1{margin:0 0 4px}.sub,.note{color:#aab3c2;font-size:13px}
+#price{font-size:34px;font-weight:bold;margin:14px 0}
+canvas{width:100%;height:220px;background:#0c1016;border-radius:12px}
+.row{display:flex;gap:10px;margin-top:12px}.row>*{flex:1;padding:13px;border-radius:10px;border:0}
+button{background:#287cf0;color:white;font-weight:bold}
+.stats{display:flex;justify-content:space-between;margin:8px 0}
+</style></head>
+<body>
+<div class="card"><h1>SK Demo Trading</h1>
+<div class="sub">Educational paper-trading simulator — virtual balance only</div>
+<div id="price">100.00</div><canvas id="chart" width="900" height="420"></canvas></div>
+<div class="card"><div class="row">
+<select id="asset"><option>Demo Asset 1</option><option>Demo Asset 2</option></select>
+<input id="amount" type="number" value="100" min="1">
+</div><div class="row">
+<button onclick="paper('BUY')">BUY (PAPER)</button>
+<button onclick="paper('SELL')">SELL (PAPER)</button>
+</div></div>
+<div class="card"><div class="stats"><span>Virtual balance</span><b id="bal">$10,000.00</b></div>
+<div class="stats"><span>Last result</span><b id="res">—</b></div></div>
+<div class="card note">Virtual money only. No broker, exchange, betting service, or real-money account is connected.</div>
+<script>
+let p=100,b=10000,a=[];for(let i=0;i<45;i++){p+=(Math.random()-.48)*2;a.push(p)}
+const c=document.getElementById('chart'),x=c.getContext('2d');
+function draw(){x.clearRect(0,0,c.width,c.height);let lo=Math.min(...a)-2,hi=Math.max(...a)+2;
+x.beginPath();a.forEach((v,i)=>{let X=15+i*(c.width-30)/(a.length-1),Y=c.height-20-(v-lo)/(hi-lo)*(c.height-40);i?x.lineTo(X,Y):x.moveTo(X,Y)});x.strokeStyle='#65a8ff';x.lineWidth=5;x.stroke()}
+function tick(){p+=(Math.random()-.49)*1.4;a.push(p);if(a.length>55)a.shift();document.getElementById('price').textContent=p.toFixed(2);draw()}
+function paper(side){let amt=Math.max(1,Number(document.getElementById('amount').value)||100),entry=p;
+setTimeout(()=>{let move=side==='BUY'?p-entry:entry-p,pl=amt*move/entry;b+=pl;
+document.getElementById('bal').textContent='$'+b.toFixed(2);
+document.getElementById('res').textContent=(pl>=0?'+$':'-$')+Math.abs(pl).toFixed(2)},5000)}
+draw();setInterval(tick,700);
+</script></body></html>
